@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jUnitMETA:TestSuit xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" 
+xmlns:jUnitMETA="http://www.example.org/jUnitMETA" name="CurrencyConvertSuite">
+  <testcase name="TestConvert">
+    <assertion name="conection" assertionType="True" method="//@testcase.0/@testclass.0/@method.0">
+      <unitperf threads="100" durationMs="100" rumpUpPeriodMs="20" maxExecutionPerSecund="100"/>
+    </assertion>
+    <assertion name="validation" assertionType="True" method="//@testcase.0/@testclass.0/@method.1">
+      <unitperf threads="100" durationMs="100" rumpUpPeriodMs="20" maxExecutionPerSecund="100"/>
+    </assertion>
+    <testclass name="MainActivity">
+      <method name="isNetworkConnected" assertion="//@testcase.0/@assertion.0"/>
+      <method name="validation" assertion="//@testcase.0/@assertion.1"/>
+    </testclass>
+  </testcase>
+</jUnitMETA:TestSuit>

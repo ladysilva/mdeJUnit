@@ -1,0 +1,5 @@
+query META2JUNIT = jUnitMETA!NamedElement.allInstances() -> select(e | e.
+		oclIsTypeOf(jUnitMETA!TestSuit) or e.oclIsTypeOf(jUnitMETA!TestCase)) ->
+		collect(x | x.toString().writeTo('C:/JunitCod/' + x.name.replaceAll('.', '/') +
+		'/' + x.name + '.java'));
+uses METATOJUNIT;

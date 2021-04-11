@@ -1,0 +1,63 @@
+library METATOJUNIT;
+
+helper context jUnitMETA!Method def: callsMethod(): String =
+	'new' + self.testclass.name + '().' + 
+	self.name + '(' + if self.parameter -> isEmpty() 
+	then ''
+	else self.parameter -> iterate(i; acc: String = '' | acc + if acc='' then ''
+	else ',' 
+	endif + i.name) 
+	endif + ')';
+
+helper context jUnitMETA!Assertion def: getNameAssertion(): String =
+	if self.assertionType = 'Equals' then'assertEquals'
+	else if self.assertionType = 'True' then 'assertTrue'
+	else if self.assertionType = 'False' then 'assertFalse'
+	else if self.assertionType = 'NotNull' then 'assertNotNull'
+	else if self.assertionType = 'Fail' then 'Fail'
+	else  self.assertionType = 'undefinedAssertionType' endif
+	endif endif endif endif;
+
+helper context jUnitMETA!Assertion def: expected(): String =
+	if self.expectedvalue -> isEmpty() then''
+	else self.expectedvalue -> iterate(i; acc: String = '' | acc + if acc='' then '' 
+	else ',' endif + i.value) endif;
+
+helper context jUnitMETA!Assertion def: generateAssertionType(): String =
+	self.getNameAssertion() + '(' + self.expected() + ',' + self.method.callsMethod() +
+	'); \n';
+
+helper context jUnitMETA!UnitPerf def: toString(): String =
+	'@JUnitPerfTest(' 
+		+ ' threads=' + self.threads 
+		+ ',' + ' durationMs=' + self.durationMs + ',' 
+		+ ' rampUpPeriodMs=' + self.rumpUpPeriodMs + ',' + ''
+		+ ' maxExecutionsPerSecond=' + self.maxExecutionPerSecund;
+
+helper context jUnitMETA!Assertion def: toString(): String =
+	'@Test \n' + 
+	 self.unitperf -> iterate(i; acc: String = '' | acc + i.toString() +
+	')\n') + 'public void ' + self.name + '() {\n' + 
+	 self.generateAssertionType()
+			+ '\n} \n';
+
+helper context jUnitMETA!HtmlGeneration def: generator(): String =
+	if self.name -> isEmpty() then '' 
+	else self.expectedvalue -> iterate(i; acc: String = '' | acc + if acc='' then ''
+	else ','
+	endif + i.name)
+	endif;
+
+helper context jUnitMETA!TestCase def: toString(): String =
+	'public class ' + self.name + '' + 
+	'{\n\n ' + 'private static final
+	 HtmlReportGenerator REPORTER = new HtmlReportGenerator();\n\n' + 
+	 '\n@Rule\n' + 'public JUnitPerfRule perfRule =
+	 new JUnitPerfRule(new HtmlReportGenerator());\n\n' + self.assertion ->
+	 iterate(i; acc: String = '' | acc + i.toString() + '\n') + '}\n';
+
+helper context jUnitMETA!TestSuit def: toString(): String =
+	'public class ' + '' + self.name + '' + 'extends ' + '' + 'TestCase' + '' + '{\n\n' +
+			'\t TestSuite suite = new TestSuite ("' + self.name + '");\n' + self.testcase
+			-> iterate(i; acc: String = '' | acc + '\t suite.addTestCase (' + i.name + '.'
+			+ '.class' + '); \n') + '\t return suite;\n} \n\n';

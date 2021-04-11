@@ -1,0 +1,116 @@
+-- @nsURI JUNITMODEL=http://www.example.org/jUnitMETA
+-- @nsURI PIMTEST=http://www.example.org/pIMTEST
+
+
+module PIM2JUNIT;
+create OUT: JUNITMODEL from IN: PIMTEST;
+
+rule TestModel2ModelJunitModel {
+	from
+		test_model: PIMTEST!TestModel
+	to
+		junit_model: JUNITMODEL!JUnitModel (
+			name <- test_model.name
+		)
+}
+
+rule TestSuit2TestSuit {
+	from
+		test_suite: PIMTEST!TestSuit
+	to
+		testsuite: JUNITMODEL!TestSuit (
+			name <- test_suite.name,
+			input <- test_suite.input
+		)
+}
+
+rule TestCase2TestCase {
+	from
+		test_case: PIMTEST!TestCase
+	to
+		testcase: JUNITMODEL!TestCase (
+			name <- test_case.name,
+			input <- test_case.input,
+			procedures <- test_case.procedure,
+			precondition <- test_case.precondition,
+			testsuit <- test_case.testsuit
+		)
+}
+
+rule Assertion2Assertion {
+	from
+		assertion_: PIMTEST!Assertion
+	to
+		assertion: JUNITMODEL!Assertion (
+			name <- assertion_.name,
+			assertionType <- assertion_.assertionType,
+			expectedvalue <- assertion_.expectedvalue,
+			order <- assertion_.order,
+			testcase <- assertion_.testcase,
+			method <- assertion_.method,
+			unitperf <- assertion_.testperf
+		)
+}
+
+rule TestClass2TestClass {
+	from
+		testclass_: PIMTEST!TestClass
+	to
+		testclass: JUNITMODEL!TestClass (
+			name <- testclass_.name,
+			testcase <- testclass_.testcase
+		)
+}
+
+rule Method2Method {
+	from
+		method_: PIMTEST!Method
+	to
+		method: JUNITMODEL!Method (
+			name <- method_.name,
+			testclass <- method_.testclass,
+			parameter <- method_.parameter
+		)
+}
+
+rule Parameter2Parameter {
+	from
+		parameter_: PIMTEST!Parameter
+	to
+		parameter: JUNITMODEL!Parameter (
+			value <- parameter_.value,
+			name <- parameter_.name --method <- parameter_.method
+			
+		)
+}
+
+rule ExpectedValue2EExpectedValue {
+	from
+		e_value: PIMTEST!ExpectedValue
+	to
+		evalue: JUNITMODEL!ExpectedValue (
+			value <- e_value.value
+		)
+}
+
+rule DataValue2DataValue {
+	from
+		d_value: PIMTEST!DataValue
+	to
+		dvalue: JUNITMODEL!DataValue (
+			expectedvalue <- d_value.expectedvalue,
+			name <- d_value.name
+		)
+}
+
+rule JunitPerfToJunitPerf {
+	from
+		perf: PIMTEST!TestPerf
+	to
+		perf_: JUNITMODEL!UnitPerf (
+			threads <- perf.threads,
+			durationMs <- perf.durationMS,
+			rumpUpPeriodMs <- perf.rumUpPeriodsMs,
+			maxExecutionPerSecund <- perf.maxExecutionPerSecund
+		)
+}
